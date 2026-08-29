@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRL Hub - Secure Key Gateway</title>
     <style>
-        body { background-color: #08080c; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 40px; margin: 0; }
-        .container { background: #12121c; padding: 30px; border-radius: 16px; display: inline-block; border: 2px solid #ffaa00; width: 350px; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); }
-        h2 { color: #ffaa00; margin-bottom: 5px; font-size: 20px; }
+        body { background-color: #08080c; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 30px; margin: 0; }
+        .container { background: #12121c; padding: 25px; border-radius: 16px; display: inline-block; border: 2px solid #ffaa00; width: 350px; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); }
+        .lang-switch { text-align: left; margin-bottom: 10px; }
+        .lang-btn { background: #222; color: #ffaa00; border: 1px solid #ffaa00; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .lang-btn:hover { background: #ffaa00; color: #000; }
+        h2 { color: #ffaa00; margin-bottom: 5px; font-size: 19px; }
         p { font-size: 11px; color: #aaa; line-height: 1.5; }
-        .feature-box { background: #1a1a26; border: 1px dashed #444; border-radius: 8px; padding: 12px; margin: 15px 0; font-size: 11px; color: #00ffcc; }
+        .feature-box { background: #1a1a26; border: 1px dashed #444; border-radius: 8px; padding: 10px; margin: 15px 0; font-size: 11px; color: #00ffcc; text-align: right; }
+        [dir="ltr"] .feature-box { text-align: left; }
         button { background: #ffaa00; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; font-size: 13px; transition: 0.2s; }
         button:hover { background: #ffa000; transform: scale(1.02); }
         button:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; }
@@ -22,11 +26,15 @@
 <body>
 
     <div class="container">
-        <h2>🔐 TRL Secure Key Gate</h2>
-        <p>نظام حماية متطور لضمان أمان السكريبت ومنع الاستخدام العشوائي.</p>
+        <div class="lang-switch">
+            <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">EN / AR</button>
+        </div>
+
+        <h2 id="t_title">🔐 TRL Secure Key Gate</h2>
+        <p id="t_desc">نظام حماية متطور لضمان أمان السكريبت ومنع الاستخدام العشوائي.</p>
         
-        <div class="feature-box">
-            🛡️ <b>نظام التحقق الذكي:</b><br>بدلاً من الإعلانات المزعجة، نستخدم فحص اتصال آمن وتوليد مفتاح فريد صالح لمدة 24 ساعة فقط!
+        <div class="feature-box" id="t_box">
+            🛡️ <b>نظام التحقق الذكي:</b><br>توليد مفتاح فريد مشفر صالح لمدة 24 ساعة فقط دون إعلانات مزعجة!
         </div>
 
         <button id="genBtn" onclick="startVerification()">الحصول على مفتاح جديد</button>
@@ -37,7 +45,52 @@
     </div>
 
     <script>
+        let currentLang = 'ar';
         let generatedKeyVal = "";
+
+        const texts = {
+            ar: {
+                dir: "rtl",
+                langText: "English 🌐",
+                title: "🔐 TRL Secure Key Gate",
+                desc: "نظام حماية متطور لضمان أمان السكريبت ومنع الاستخدام العشوائي.",
+                box: "🛡️ <b>نظام التحقق الذكي:</b><br>توليد مفتاح فريد مشفر صالح لمدة 24 ساعة فقط دون إعلانات مزعجة!",
+                btn: "الحصول على مفتاح جديد",
+                copy: "📋 نسخ الكود بنقرة واحدة",
+                copied: "✅ تم النسخ بنجاح!",
+                waiting: (t) => `⏳ يرجى الانتظار ${t} ثوانٍ لإتمام التحقق الأمني...`
+            },
+            en: {
+                dir: "ltr",
+                langText: "عربي 🌐",
+                title: "🔐 TRL Secure Key Gate",
+                desc: "Advanced security system to ensure script safety and prevent spam.",
+                box: "🛡️ <b>Smart Verification:</b><br>Generates a unique encrypted key valid for 24 hours only with no annoying ads!",
+                btn: "Get New Key",
+                copy: "📋 Copy Key to Clipboard",
+                copied: "✅ Copied Successfully!",
+                waiting: (t) => `⏳ Please wait ${t} seconds for security verification...`
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const t = texts[currentLang];
+            
+            document.getElementById("htmlRoot").setAttribute("dir", t.dir);
+            document.getElementById("langBtn").innerText = t.langText;
+            document.getElementById("t_title").innerText = t.title;
+            document.getElementById("t_desc").innerText = t.desc;
+            document.getElementById("t_box").innerHTML = t.box;
+            
+            const genBtn = document.getElementById("genBtn");
+            if (!genBtn.disabled) genBtn.innerText = t.btn;
+            
+            const copyBtn = document.getElementById("copyBtn");
+            if (copyBtn.style.display !== "none") {
+                copyBtn.innerText = t.copy;
+            }
+        }
 
         function startVerification() {
             const btn = document.getElementById("genBtn");
@@ -50,18 +103,18 @@
             copyBtn.style.display = "none";
 
             let timeLeft = 10;
-            timerTxt.innerText = `⏳ يرجى الانتظار ${timeLeft} ثوانٍ لإتمام التحقق الأمني...`;
+            timerTxt.innerText = texts[currentLang].waiting(timeLeft);
 
             let countdown = setInterval(() => {
                 timeLeft--;
                 if (timeLeft > 0) {
-                    timerTxt.innerText = `⏳ يرجى الانتظار ${timeLeft} ثوانٍ لإتمام التحقق الأمني...`;
+                    timerTxt.innerText = texts[currentLang].waiting(timeLeft);
                 } else {
                     clearInterval(countdown);
                     timerTxt.innerText = "";
                     btn.disabled = false;
+                    btn.innerText = texts[currentLang].btn;
                     
-                    // توليد الكود مع دمج وقت النظام الحالي (Timestamp)
                     const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
                     const timestamp = Date.now();
                     generatedKeyVal = `TRL-PRO-${timestamp}-${randomString}`;
@@ -69,6 +122,7 @@
                     keyDisp.innerText = generatedKeyVal;
                     keyDisp.style.display = "block";
                     copyBtn.style.display = "block";
+                    copyBtn.innerText = texts[currentLang].copy;
                 }
             }, 1000);
         }
@@ -76,9 +130,9 @@
         function copyKeyToClipboard() {
             navigator.clipboard.writeText(generatedKeyVal).then(() => {
                 const copyBtn = document.getElementById("copyBtn");
-                copyBtn.innerText = "✅ تم النسخ بنجاح!";
+                copyBtn.innerText = texts[currentLang].copied;
                 setTimeout(() => {
-                    copyBtn.innerText = "📋 نسخ الكود بنقرة واحدة";
+                    copyBtn.innerText = texts[currentLang].copy;
                 }, 2000);
             });
         }
