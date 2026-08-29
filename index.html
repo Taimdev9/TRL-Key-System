@@ -3,38 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRL Hub - Key System</title>
+    <title>TRL Hub - Secure Key Gateway</title>
     <style>
-        body { background-color: #0a0a0f; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 50px; }
-        .box { background: #151520; padding: 30px; border-radius: 12px; display: inline-block; border: 2px solid #ffaa00; width: 320px; }
-        input { width: 90%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: #00ffcc; border-radius: 6px; text-align: center; font-size: 14px; }
-        button { background: #ffaa00; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 10px; }
-        button:hover { background: #ffa000; }
-        #keyDisplay { color: #00ffcc; font-weight: bold; word-break: break-all; margin-top: 15px; background: #111; padding: 10px; border-radius: 5px; }
+        body { background-color: #08080c; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 40px; margin: 0; }
+        .container { background: #12121c; padding: 30px; border-radius: 16px; display: inline-block; border: 2px solid #ffaa00; width: 350px; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); }
+        h2 { color: #ffaa00; margin-bottom: 5px; font-size: 20px; }
+        p { font-size: 11px; color: #aaa; line-height: 1.5; }
+        .feature-box { background: #1a1a26; border: 1px dashed #444; border-radius: 8px; padding: 12px; margin: 15px 0; font-size: 11px; color: #00ffcc; }
+        button { background: #ffaa00; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; font-size: 13px; transition: 0.2s; }
+        button:hover { background: #ffa000; transform: scale(1.02); }
+        button:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; }
+        #keyDisplay { color: #00ffcc; font-weight: bold; word-break: break-all; margin-top: 15px; background: #0a0a0f; padding: 12px; border-radius: 8px; border: 1px solid #222; font-size: 12px; display: none; }
+        .copy-btn { background: #00ffcc; color: #000; display: none; margin-top: 8px; }
+        .copy-btn:hover { background: #00ccaa; }
+        #timerText { color: #ff5555; font-weight: bold; margin-top: 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h2>🔐 TRL Key Generator</h2>
-        <p style="font-size: 12px; color: #aaa;">اضغط الزر أدناه لتوليد مفتاح فريد ومؤقت خاص بك:</p>
+    <div class="container">
+        <h2>🔐 TRL Secure Key Gate</h2>
+        <p>نظام حماية متطور لضمان أمان السكريبت ومنع الاستخدام العشوائي.</p>
         
-        <button onclick="generateUniqueKey()">الحصول على مفتاح جديد</button>
-        
-        <div id="keyDisplay">اضغط الزر لتوليد الكود...</div>
+        <div class="feature-box">
+            🛡️ <b>نظام التحقق الذكي:</b><br>بدلاً من الإعلانات المزعجة، نستخدم فحص اتصال آمن وتوليد مفتاح فريد صالح لمدة 24 ساعة فقط!
+        </div>
+
+        <button id="genBtn" onclick="startVerification()">الحصول على مفتاح جديد</button>
+        <div id="timerText"></div>
+
+        <div id="keyDisplay">جاري التوليد...</div>
+        <button id="copyBtn" class="copy-btn" onclick="copyKeyToClipboard()">📋 نسخ الكود بنقرة واحدة</button>
     </div>
 
     <script>
-        function generateUniqueKey() {
-            // توليد كود عشوائي مستحيل يتكرر يعتمد على الوقت العشوائي ووقت النظام الحالي
-            const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
-            const timeCode = Date.now().toString(36).toUpperCase();
-            const uniqueKey = "TRL-PRO-" + timeCode + "-" + randomString;
-            
-            // عرض الكود للمستخدم
-            document.getElementById("keyDisplay").innerText = uniqueKey;
-            
-            // (اختياري) يمكنك لاحقاً إرسال هذا الكود لقاعدة بيانات أو تخزينه مؤقتاً للتحقق منه
+        let generatedKeyVal = "";
+
+        function startVerification() {
+            const btn = document.getElementById("genBtn");
+            const timerTxt = document.getElementById("timerText");
+            const keyDisp = document.getElementById("keyDisplay");
+            const copyBtn = document.getElementById("copyBtn");
+
+            btn.disabled = true;
+            keyDisp.style.display = "none";
+            copyBtn.style.display = "none";
+
+            let timeLeft = 10;
+            timerTxt.innerText = `⏳ يرجى الانتظار ${timeLeft} ثوانٍ لإتمام التحقق الأمني...`;
+
+            let countdown = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    timerTxt.innerText = `⏳ يرجى الانتظار ${timeLeft} ثوانٍ لإتمام التحقق الأمني...`;
+                } else {
+                    clearInterval(countdown);
+                    timerTxt.innerText = "";
+                    btn.disabled = false;
+                    
+                    // توليد الكود مع دمج وقت النظام الحالي (Timestamp)
+                    const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
+                    const timestamp = Date.now();
+                    generatedKeyVal = `TRL-PRO-${timestamp}-${randomString}`;
+
+                    keyDisp.innerText = generatedKeyVal;
+                    keyDisp.style.display = "block";
+                    copyBtn.style.display = "block";
+                }
+            }, 1000);
+        }
+
+        function copyKeyToClipboard() {
+            navigator.clipboard.writeText(generatedKeyVal).then(() => {
+                const copyBtn = document.getElementById("copyBtn");
+                copyBtn.innerText = "✅ تم النسخ بنجاح!";
+                setTimeout(() => {
+                    copyBtn.innerText = "📋 نسخ الكود بنقرة واحدة";
+                }, 2000);
+            });
         }
     </script>
 
