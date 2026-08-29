@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRL Hub - Key System</title>
+    <style>
+        body { background-color: #0a0a0f; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding-top: 50px; }
+        .box { background: #151520; padding: 30px; border-radius: 12px; display: inline-block; border: 2px solid #ffaa00; width: 320px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: #00ffcc; border-radius: 6px; text-align: center; font-size: 14px; }
+        button { background: #ffaa00; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 10px; }
+        button:hover { background: #ffa000; }
+        #keyDisplay { color: #00ffcc; font-weight: bold; word-break: break-all; margin-top: 15px; background: #111; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>🔐 TRL Key Generator</h2>
+        <p style="font-size: 12px; color: #aaa;">اضغط الزر أدناه لتوليد مفتاح فريد ومؤقت خاص بك:</p>
+        
+        <button onclick="generateUniqueKey()">الحصول على مفتاح جديد</button>
+        
+        <div id="keyDisplay">اضغط الزر لتوليد الكود...</div>
+    </div>
+
+    <script>
+        function generateUniqueKey() {
+            // توليد كود عشوائي مستحيل يتكرر يعتمد على الوقت العشوائي ووقت النظام الحالي
+            const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
+            const timeCode = Date.now().toString(36).toUpperCase();
+            const uniqueKey = "TRL-PRO-" + timeCode + "-" + randomString;
+            
+            // عرض الكود للمستخدم
+            document.getElementById("keyDisplay").innerText = uniqueKey;
+            
+            // (اختياري) يمكنك لاحقاً إرسال هذا الكود لقاعدة بيانات أو تخزينه مؤقتاً للتحقق منه
+        }
+    </script>
+
+</body>
+</html>
